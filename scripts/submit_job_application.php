@@ -9,7 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $gender = $_POST['gender'];
     $address = $_POST['address'];
     $salary_expectation = $_POST['salary_expectation'];
-    
+
     $cv = $_FILES['cv']['name'];
     $cv_tmp = $_FILES['cv']['tmp_name'];
     $uploads_dir = 'uploads';
@@ -36,4 +36,3 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $conn->close();
 }
-?>

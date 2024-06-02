@@ -1,10 +1,10 @@
-<?php 
+<?php
 
 // include the database connection
-include ("db_connection.php");
+include("db_connection.php");
 
 
-if($_SERVER["REQUEST_METHOD"] == "POST") {
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Take all the inputs from HR of job post form
 
@@ -15,11 +15,11 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
     $experience_years = $_POST['experience_years'];
     $location = $_POST['location'];
     $salary_range = $_POST['salary_range'];
-    
+
     $job_type = $_POST['job_type'];
     $qualifications = $_POST['qualifications'];
     $benefits = $_POST['benefits'];
-    
+
     $education_requirement = $_POST['education_requirement'];
 
 
@@ -27,7 +27,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
     $sql = "INSERT INTO jobs (position_name, vacancy, deadline, experience_years, location, salary_range, job_type, qualifications, benefits, education_requirement)
     VALUES ('$position_name', '$vacancy', '$deadline', '$experience_years', '$location', '$salary_range', '$job_type', '$qualifications', '$benefits', '$education_requirement')";
 
-    if($conn->query($sql) === TRUE) {
+    if ($conn->query($sql) === TRUE) {
         header("Location: successful.html");
     } else {
         header("Location: error.html");
@@ -35,10 +35,4 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
 
 
     $conn->close();
-
 }
-
-
-
-
-?>

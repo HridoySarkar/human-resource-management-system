@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 include("scripts/db_connection.php");
 
@@ -10,16 +10,18 @@ $result = $conn->query($sql);
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Careers</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
+
 <body class="bg-gray-100">
     <div class="container mx-auto mt-10">
         <h2 class="text-2xl font-bold mb-5">Current Job Openings</h2>
         <div class="bg-white p-8 rounded shadow-md">
-            <?php while($row = $result->fetch_assoc()): ?>
+            <?php while ($row = $result->fetch_assoc()) : ?>
                 <div class="mb-4 p-4 border <?= (strtotime($row['deadline']) < time()) ? 'border-red-500 bg-red-100' : 'border-gray-300 bg-gray-50' ?> rounded">
                     <h3 class="text-xl font-semibold"><?= $row['position_name'] ?></h3>
                     <p>Location: <?= $row['location'] ?></p>
@@ -36,6 +38,7 @@ $result = $conn->query($sql);
         </div>
     </div>
 </body>
+
 </html>
 <?php
 $conn->close();

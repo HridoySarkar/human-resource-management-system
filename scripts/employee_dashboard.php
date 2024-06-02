@@ -6,47 +6,107 @@ session_start();
 
 $userId = $_SESSION['userId']; // Assuming the user ID is stored in session
 
-// Fetch user data
-$query = "
-SELECT 
-    e.name, e.username, e.password, e.dateOfJoining, e.status, 
-    d.departmentName, d.headOfDepartment, 
-    (e.baseSalary + s.bonuses - s.deductions) AS totalSalary
-FROM Employee e
-LEFT JOIN Salary s ON e.employeeId = s.employeeId
-LEFT JOIN Department d ON e.departmentId = d.departmentId
-WHERE e.employeeId =?;
-";
-
-
-$stmt = $conn->prepare($query);
-$stmt->bind_param("i", $userId); // "i" indicates an integer parameter
-$stmt->execute();
-$result = $stmt->get_result();
-$userData = $result->fetch_assoc();
-
-// Update user data
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-
-    $username = $_POST['username'];
-    $password = $_POST['password'];
-
-    $updateQuery = "
-    UPDATE Employee 
-    SET username =?, password =?
-    WHERE employeeId =?;
-    ";
-
-    $stmt = $conn->prepare($updateQuery);
-    $stmt->bind_param("ssi", $username, $password, $userId); // "s" for string, "i" for integer
-    $stmt->execute();
-
-    // Refresh the data
-    $stmt->execute([$userId]);
-    $userData = $stmt->get_result()->fetch_assoc();
+// Function to sanitize input
+function sanitizeInput($data) {
+    return htmlspecialchars(strip_tags($data));
 }
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    // Handle password update
+    if (isset($_POST['change_password'])) {
+
+        $username = $_POST['username'];
+        $password = $_POST['password'];
+    
+        // Update the password
+        $updateQuery = "
+        UPDATE Employee 
+        SET password =?
+        WHERE employeeId =?;
+        ";
+    
+        $stmt = $conn->prepare($updateQuery);
+        $stmt->bind_param("si", $password, $userId); // "s" for string, "i" for integer
+        $stmt->execute();
+    
+        // Refresh the data
+        // $stmt->execute([$userId]);
+        
+        header("Location: employee_dashboard.php");
+        $userData = $stmt->get_result()->fetch_assoc();
+        exit;
+        
+    } else { 
+        // Handle leave request submission
+        $from_date = sanitizeInput($_POST['from_date']);
+        $to_date = sanitizeInput($_POST['to_date']);
+        $reason = sanitizeInput($_POST['reason']);
+
+        // Validate dates
+        $from_date_obj = date_create_from_format('Y-m-d', $from_date);
+        $to_date_obj = date_create_from_format('Y-m-d', $to_date);
+
+        if (!$from_date_obj || !$to_date_obj) {
+            die("Invalid date format.");
+        }
+
+        // Ensure employee exists
+        $check_employee_query = "SELECT employeeId FROM Employee WHERE employeeId = ?";
+        $stmt = $conn->prepare($check_employee_query);
+        $stmt->bind_param("i", $userId);
+        $stmt->execute();
+        $stmt->store_result();
+
+        if ($stmt->num_rows > 0) {
+            // Employee exists, proceed with inserting leave request
+            $insertQuery = "INSERT INTO leave_requests (employeeId, from_date, to_date, reason) VALUES (?, ?, ?, ?)";
+            $stmt = $conn->prepare($insertQuery);
+            $stmt->bind_param("isss", $userId, $from_date, $to_date, $reason);
+
+            if ($stmt->execute()) {
+               // echo "Leave request submitted successfully.";
+                header("Location: successful.php");
+               // header("Location: employee_dashboard.php");
+            } else {
+                // echo "Error submitting leave request: " . $stmt->error;
+                header("Location: error.php");
+                echo $stmt->error;
+            }
+        } else {
+            // echo "Error: Employee ID does not exist.";
+            header("Location: error.php");
+        }
+    }
+} else {
+    // Fetch user data for display
+    $query = "
+    SELECT 
+        e.name, e.username, e.password, e.dateOfJoining, e.status, 
+        d.departmentName, d.headOfDepartment, 
+        (e.baseSalary + s.bonuses - s.deductions) AS totalSalary
+    FROM Employee e
+    LEFT JOIN Salary s ON e.employeeId = s.employeeId
+    LEFT JOIN Department d ON e.departmentId = d.departmentId
+    WHERE e.employeeId = ?";
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("i", $userId); // "i" indicates an integer parameter
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $userData = $result->fetch_assoc();
+}
+
+// Close statement and connection
+$stmt->close();
+$conn->close();
+
 ?>
 
+
+
+
+
+
+<!-- HTML TEMPLATE -->
 <!DOCTYPE html>
 <html>
 <head>
@@ -61,10 +121,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <div class="p-6 bg-white rounded-lg shadow-md">
                 <h2 class="text-xl font-semibold mb-2">Personal Details</h2>
                 
-                <form action="">
+                <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);?>" method="post">
                     <p>Name: <?php echo htmlspecialchars($userData['name']);?></p>
                     <p>Username: <?php echo htmlspecialchars($userData['username']);?></p>
-                    
+
+                        <!-- Add the hidden input here -->
+                        <input type="hidden" name="change_password" value="true">
+
                     <!-- Change the password -->
                     <div>
                          <label for="password" class="block text-sm font-medium text-gray-700">Password:</label>
@@ -93,10 +156,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <p>Joining Date: <?php echo htmlspecialchars($userData['dateOfJoining']);?></p>
             </div>
         </div>
+
+
         <!-- Leave Request Form -->
         <div class="mt-8">
             <h2 class="text-2xl font-bold mb-4">Apply for Leave</h2>
-            <form method="POST" action="">
+
+            <form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);?>">
+            
                 <div class="mb-4">
                     <label for="from_date" class="block text-sm font-medium text-gray-700">From Date:</label>
                     <input type="date" id="from_date" name="from_date" required class="w-full mt-1 p-2 border border-gray-300 rounded-md">
@@ -114,6 +181,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 </div>
             </form>
         </div>
+
+
+
     </div>
 </body>
 </html>

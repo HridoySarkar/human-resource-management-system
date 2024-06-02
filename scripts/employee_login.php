@@ -41,10 +41,8 @@ if ($stmt->execute()) {
         header("Location: error.php");
     }
 } else {
-    echo "Error: ". $stmt->error;
+    echo "Error: " . $stmt->error;
 }
 
 $stmt->close();
 $conn->close();
-
-?>
