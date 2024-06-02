@@ -7,7 +7,7 @@
     <!-- Tailwind CSS CDN -->
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="asstes/styles.css">
 </head>
 
 
