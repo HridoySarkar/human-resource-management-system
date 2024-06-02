@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 30, 2024 at 01:10 PM
+-- Generation Time: Jun 02, 2024 at 01:33 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.1.25
 
@@ -40,6 +40,24 @@ CREATE TABLE `admindashboard` (
 INSERT INTO `admindashboard` (`adminDashboardId`, `employeeID`, `dashboardContent`) VALUES
 (1, 1, 'Admin dashboard content goes here'),
 (2, 4, 'Admin dashboard content goes here');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `applicants`
+--
+
+CREATE TABLE `applicants` (
+  `id` int(11) NOT NULL,
+  `job_id` int(11) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `gender` enum('Male','Female','No Mention') NOT NULL,
+  `address` text NOT NULL,
+  `salary_expectation` varchar(255) NOT NULL,
+  `cv_path` varchar(255) NOT NULL,
+  `applied_time` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -125,6 +143,35 @@ INSERT INTO `employee` (`employeeId`, `name`, `email`, `phone`, `address`, `jobT
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `jobs`
+--
+
+CREATE TABLE `jobs` (
+  `id` int(11) NOT NULL,
+  `position_name` varchar(255) NOT NULL,
+  `published_time` timestamp NOT NULL DEFAULT current_timestamp(),
+  `vacancy` int(11) NOT NULL,
+  `deadline` date NOT NULL,
+  `experience_years` int(11) NOT NULL,
+  `location` varchar(255) NOT NULL,
+  `salary_range` varchar(255) NOT NULL,
+  `job_type` enum('Full-time','Part-time','Intern','Contractual') NOT NULL,
+  `qualifications` text NOT NULL,
+  `benefits` text NOT NULL,
+  `education_requirement` text NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `jobs`
+--
+
+INSERT INTO `jobs` (`id`, `position_name`, `published_time`, `vacancy`, `deadline`, `experience_years`, `location`, `salary_range`, `job_type`, `qualifications`, `benefits`, `education_requirement`) VALUES
+(1, 'Software Engineer (Java)', '2024-06-02 09:55:38', 2, '2024-06-10', 2, 'Dhaka, Bangladesh.', '50k - 60k (BDT)', 'Full-time', 'Analyzing information\r\nGeneral programming skills\r\nSoftware design\r\nSoftware debugging\r\nSoftware documentation\r\nSoftware testing\r\nProblem solving\r\nTeamwork\r\nSoftware development fundamentals\r\nSoftware development process\r\nSoftware requirements', 'paid time off\r\npaid parental leave\r\nhealth insurance\r\ndental insurance\r\nremote work\r\na flexible schedule\r\ntuition reimbursement\r\nbonuses(2/year)', 'BSc. / MSc. from any reputated university. '),
+(2, 'Intern Software Engineer', '2024-06-02 09:59:07', 5, '2024-06-10', 0, 'Dhaka, Bangladesh.', '10k - 12k (BDT)', 'Intern', 'Outstanding coding abilities\r\nThorough knowledge of atleast 1 programming language.\r\nWorking knowledge of HTML, CSS, Javascript is a must.\r\nPassion to learn new technology\r\nShould work with seniors and be a team player.', 'Comprehensive training in web, mobile development.\r\nSeed capital to launch your first app or solution.\r\nA dynamic, supportive, and innovative work environment.', 'Completing last semester of your BSc.');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `salary`
 --
 
@@ -179,6 +226,13 @@ ALTER TABLE `admindashboard`
   ADD KEY `employeeID` (`employeeID`);
 
 --
+-- Indexes for table `applicants`
+--
+ALTER TABLE `applicants`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `job_id` (`job_id`);
+
+--
 -- Indexes for table `attendance`
 --
 ALTER TABLE `attendance`
@@ -203,6 +257,12 @@ ALTER TABLE `employee`
   ADD KEY `fk_departmentId` (`departmentId`);
 
 --
+-- Indexes for table `jobs`
+--
+ALTER TABLE `jobs`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `salary`
 --
 ALTER TABLE `salary`
@@ -221,6 +281,12 @@ ALTER TABLE `userdashboard`
 --
 
 --
+-- AUTO_INCREMENT for table `applicants`
+--
+ALTER TABLE `applicants`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
 -- AUTO_INCREMENT for table `department`
 --
 ALTER TABLE `department`
@@ -233,6 +299,12 @@ ALTER TABLE `employee`
   MODIFY `employeeId` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=102;
 
 --
+-- AUTO_INCREMENT for table `jobs`
+--
+ALTER TABLE `jobs`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
 -- Constraints for dumped tables
 --
 
@@ -241,6 +313,12 @@ ALTER TABLE `employee`
 --
 ALTER TABLE `admindashboard`
   ADD CONSTRAINT `admindashboard_ibfk_1` FOREIGN KEY (`employeeID`) REFERENCES `employee` (`employeeId`);
+
+--
+-- Constraints for table `applicants`
+--
+ALTER TABLE `applicants`
+  ADD CONSTRAINT `applicants_ibfk_1` FOREIGN KEY (`job_id`) REFERENCES `jobs` (`id`);
 
 --
 -- Constraints for table `attendance`
