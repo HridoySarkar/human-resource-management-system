@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 02, 2024 at 09:43 PM
+-- Generation Time: Jun 03, 2024 at 02:44 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.1.25
 
@@ -59,6 +59,13 @@ CREATE TABLE `applicants` (
   `applied_time` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `applicants`
+--
+
+INSERT INTO `applicants` (`id`, `job_id`, `name`, `email`, `gender`, `address`, `salary_expectation`, `cv_path`, `applied_time`) VALUES
+(6, 2, 'Md. Rejoan Siddiky', 'siddikyrejoan.work@gmail.com', 'Male', 'Dhaka, Bd', '10K', 'uploads/Resume of Md. Rejoan Siddiky.pdf', '2024-06-03 12:35:36');
+
 -- --------------------------------------------------------
 
 --
@@ -84,6 +91,56 @@ INSERT INTO `attendance` (`attendanceId`, `employeeId`, `date`, `clockInTime`, `
 (2, 2, '2024-05-01', '09:15:00', '17:15:00', 'Present', NULL),
 (3, 3, '2024-05-01', '09:00:00', '17:00:00', 'Present', NULL),
 (4, 4, '2024-05-01', '09:00:00', '17:00:00', 'Absent', 'Sick Leave');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `clients`
+--
+
+CREATE TABLE `clients` (
+  `clientId` int(11) NOT NULL,
+  `name` varchar(120) NOT NULL,
+  `contactInfo` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `clients`
+--
+
+INSERT INTO `clients` (`clientId`, `name`, `contactInfo`) VALUES
+(1, 'Lorem Softwares', 'contact@loremsoftwares.com'),
+(2, 'Go Forces Ltd', 'info@goforcesltd.com'),
+(3, 'Video Go Limited', 'support@videogolimited.com'),
+(4, 'Lorem Golds', 'sales@loremgolds.com'),
+(5, 'Ipsum Clouds', 'help@ipsumclouds.com'),
+(6, 'Ipsumm E-commerce Ltd', 'admin@ipsummecltd.com');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `contacts`
+--
+
+CREATE TABLE `contacts` (
+  `contactID` int(11) NOT NULL,
+  `department` varchar(255) DEFAULT NULL,
+  `contactPerson` varchar(255) DEFAULT NULL,
+  `phoneNumber` varchar(15) DEFAULT NULL,
+  `email` varchar(80) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `contacts`
+--
+
+INSERT INTO `contacts` (`contactID`, `department`, `contactPerson`, `phoneNumber`, `email`) VALUES
+(1, 'HR Administration', 'John Doe', '+1234567890', 'hr@example.com'),
+(2, 'Electrical Maintenance', 'Jane Smith', '+0987654321', 'electric@example.com'),
+(3, 'Water Supply', 'Alice Johnson', '+1122334455', 'water@example.com'),
+(4, 'IT Support', 'Bob Brown', '+6677889900', 'it@example.com'),
+(5, 'Security', 'Charlie Davis', '+2233445566', 'security@example.com'),
+(6, 'Facilities Management', 'David Edwards', '+3344556677', 'facilities@example.com');
 
 -- --------------------------------------------------------
 
@@ -139,6 +196,34 @@ INSERT INTO `employee` (`employeeId`, `name`, `email`, `phone`, `address`, `jobT
 (3, 'hridoy', 'hridoy@example.com', '555-123-4567', '789 Elm St, Anytown, BD', 'Sr. Programmer', 3, '2020-02-10', 'Active', 48000.00, 'hridoy', '91011', 'employee'),
 (4, 'rejoan', 'rejoan@example.com', '113-112-4567', '709 Fnt St, Anytown, BD', 'IT Specialist', 3, '2020-02-10', 'Active', 38000.00, 'rejoan', '123', 'admin'),
 (101, 'test', 'test@example.com', '123569785', '30 Mt. Fujiyama, JP', 'senior accountant', 2, '2020-01-15', 'Active', 40000.00, 'test', 'test', 'employee');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `holidays`
+--
+
+CREATE TABLE `holidays` (
+  `holidayID` int(11) NOT NULL,
+  `date` date DEFAULT NULL,
+  `description` varchar(120) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `holidays`
+--
+
+INSERT INTO `holidays` (`holidayID`, `date`, `description`) VALUES
+(1, '2024-01-01', 'New Year\'s Day'),
+(2, '2024-02-14', 'Valentine\'s Day'),
+(3, '2024-03-17', 'St. Patrick\'s Day'),
+(4, '2024-04-21', 'Easter Sunday'),
+(5, '2024-05-27', 'Memorial Day'),
+(6, '2024-07-04', 'Independence Day'),
+(7, '2024-09-02', 'Labor Day'),
+(8, '2024-10-31', 'Halloween'),
+(9, '2024-11-28', 'Thanksgiving Day'),
+(10, '2024-12-25', 'Christmas Day');
 
 -- --------------------------------------------------------
 
@@ -214,6 +299,39 @@ INSERT INTO `salary` (`salaryId`, `employeeId`, `bonuses`, `deductions`, `baseSa
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `services`
+--
+
+CREATE TABLE `services` (
+  `ServiceID` int(11) NOT NULL,
+  `ClientID` int(11) DEFAULT NULL,
+  `ProjectName` varchar(255) DEFAULT NULL,
+  `Description` text DEFAULT NULL,
+  `StartDate` date DEFAULT NULL,
+  `EndDate` date DEFAULT NULL,
+  `TotalEarnings` decimal(10,2) DEFAULT NULL,
+  `Status` enum('On going','Completed') DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `services`
+--
+
+INSERT INTO `services` (`ServiceID`, `ClientID`, `ProjectName`, `Description`, `StartDate`, `EndDate`, `TotalEarnings`, `Status`) VALUES
+(11, 1, 'Custom CRM Development', 'Developing a custom Customer Relationship Management system.', '2018-01-15', '2018-12-31', 120000.00, 'Completed'),
+(12, 2, 'AI Chatbot Integration', 'Integrating an AI chatbot for customer support automation.', '2019-02-20', '2019-08-30', 80000.00, 'Completed'),
+(13, 3, 'E-commerce Platform Upgrade', 'Upgrading an existing e-commerce platform with new features.', '2020-04-05', '2020-11-15', 150000.00, 'Completed'),
+(14, 4, 'Cloud Migration', 'Migrating existing infrastructure to cloud services.', '2021-07-10', '2022-01-25', 200000.00, 'Completed'),
+(15, 5, 'Video Streaming App Development', 'Creating a video streaming app for mobile devices.', '2022-03-01', '2022-09-30', 180000.00, 'Completed'),
+(16, 1, 'Data Analysis Tool', 'Building a tool for analyzing sales and marketing data.', '2023-01-15', '2023-06-30', 90000.00, 'Completed'),
+(17, 2, 'Cybersecurity Audit', 'Performing a comprehensive cybersecurity audit and implementing security measures.', '2023-08-01', '2023-12-31', 75000.00, 'Completed'),
+(18, 3, 'Mobile App Development', 'Developing a mobile app for internal communication and task management.', '2024-02-01', '2024-07-31', 130000.00, 'Completed'),
+(19, 5, 'Social Media Marketing Campaign', 'Designing and executing a social media marketing campaign.', '2024-05-15', '2024-08-15', 50000.00, 'On going'),
+(20, 6, 'Website Redesign', 'Redesigning the company website for better user experience and SEO optimization.', '2024-09-01', '2024-12-31', 60000.00, 'On going');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `userdashboard`
 --
 
@@ -257,6 +375,18 @@ ALTER TABLE `attendance`
   ADD KEY `employeeId` (`employeeId`);
 
 --
+-- Indexes for table `clients`
+--
+ALTER TABLE `clients`
+  ADD PRIMARY KEY (`clientId`);
+
+--
+-- Indexes for table `contacts`
+--
+ALTER TABLE `contacts`
+  ADD PRIMARY KEY (`contactID`);
+
+--
 -- Indexes for table `department`
 --
 ALTER TABLE `department`
@@ -272,6 +402,12 @@ ALTER TABLE `employee`
   ADD UNIQUE KEY `username` (`username`),
   ADD UNIQUE KEY `password` (`password`),
   ADD KEY `fk_departmentId` (`departmentId`);
+
+--
+-- Indexes for table `holidays`
+--
+ALTER TABLE `holidays`
+  ADD PRIMARY KEY (`holidayID`);
 
 --
 -- Indexes for table `jobs`
@@ -294,6 +430,13 @@ ALTER TABLE `salary`
   ADD KEY `employeeId` (`employeeId`);
 
 --
+-- Indexes for table `services`
+--
+ALTER TABLE `services`
+  ADD PRIMARY KEY (`ServiceID`),
+  ADD KEY `ClientID` (`ClientID`);
+
+--
 -- Indexes for table `userdashboard`
 --
 ALTER TABLE `userdashboard`
@@ -308,7 +451,19 @@ ALTER TABLE `userdashboard`
 -- AUTO_INCREMENT for table `applicants`
 --
 ALTER TABLE `applicants`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
+-- AUTO_INCREMENT for table `clients`
+--
+ALTER TABLE `clients`
+  MODIFY `clientId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
+-- AUTO_INCREMENT for table `contacts`
+--
+ALTER TABLE `contacts`
+  MODIFY `contactID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `department`
@@ -323,6 +478,12 @@ ALTER TABLE `employee`
   MODIFY `employeeId` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=102;
 
 --
+-- AUTO_INCREMENT for table `holidays`
+--
+ALTER TABLE `holidays`
+  MODIFY `holidayID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+
+--
 -- AUTO_INCREMENT for table `jobs`
 --
 ALTER TABLE `jobs`
@@ -333,6 +494,12 @@ ALTER TABLE `jobs`
 --
 ALTER TABLE `leave_requests`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+
+--
+-- AUTO_INCREMENT for table `services`
+--
+ALTER TABLE `services`
+  MODIFY `ServiceID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- Constraints for dumped tables
@@ -379,6 +546,12 @@ ALTER TABLE `leave_requests`
 --
 ALTER TABLE `salary`
   ADD CONSTRAINT `salary_ibfk_1` FOREIGN KEY (`employeeId`) REFERENCES `employee` (`employeeId`);
+
+--
+-- Constraints for table `services`
+--
+ALTER TABLE `services`
+  ADD CONSTRAINT `services_ibfk_1` FOREIGN KEY (`ClientID`) REFERENCES `clients` (`clientId`);
 
 --
 -- Constraints for table `userdashboard`
