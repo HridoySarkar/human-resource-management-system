@@ -1,9 +1,9 @@
 <?php
+    include $navbar = "./navbar.php";
+    include("scripts/db_connection.php");
 
-include("scripts/db_connection.php");
 
-
-$job_id = $_GET['job_id'];
+    $job_id = $_GET['job_id'];
 ?>
 
 
@@ -19,6 +19,10 @@ $job_id = $_GET['job_id'];
 </head>
 
 <body class="bg-gray-100">
+
+    <?php
+        $navbar;
+    ?>
 
     <div class="container mx-auto mt-10">
         <h2 class="text-2xl font-bold mb-5">Apply for Job</h2>

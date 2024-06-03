@@ -11,6 +11,12 @@
 
 <body class="bg-gray-100">
 
+    <!-- navbar -->
+
+    <?php
+        include "./navbar.php";
+    ?>
+
     <div class="container mx-auto mt-10">
         <div class="columns-3"></div>
         <div class="columns-6">
