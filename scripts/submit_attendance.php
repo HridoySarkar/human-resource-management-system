@@ -2,51 +2,27 @@
 
 include("db_connection.php");
 
-
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    if (isset($_POST['add_holiday'])) {
-        $date = $_POST['date'];
-        $description = $_POST['description'];
-        $year = $_POST['year'];
+    $employeeId = $_POST['employeeId'];
+    $date = $_POST['date'];
+    $clockInTime = $_POST['clockInTime'];
+    $clockOutTime = $_POST['clockOutTime'];
+    $status = $_POST['status'];
 
-        $stmt = $conn->prepare("INSERT INTO holidays (date, description, year) VALUES (?, ?, ?)");
-        $stmt->bind_param("ssi", $date, $description, $year);
-        $stmt->execute();
-        $stmt->close();
-    } elseif (isset($_POST['delete_holiday'])) {
-        $holidayId = $_POST['holidayId'];
+    $stmt = $conn->prepare("INSERT INTO attendance (employeeId, date, clockInTime, clockOutTime, status) VALUES (?, ?, ?, ?, ?)");
+    $stmt->bind_param("issss", $employeeId, $date, $clockInTime, $clockOutTime, $status);
 
-        $stmt = $conn->prepare("DELETE FROM holidays WHERE holidayID = ?");
-        $stmt->bind_param("i", $holidayId);
-        $stmt->execute();
-        $stmt->close();
+    if ($stmt->execute()) {
+        echo "Attendance submitted successfully.";
+        header("Location: admin_dashboard.php");
+    } else {
+        echo "Error: " . $stmt->error;
     }
+
+    $stmt->close();
+    $conn->close();
 }
-
-$query = "SELECT * FROM holidays ORDER BY date";
-$result = $conn->query($query);
-
-$calendar = '';
-while ($row = $result->fetch_assoc()) {
-
-    $calendar .= '<div class="bg-white shadow-md rounded-lg p-4 mb-4">
-        <p class="text-lg font-bold">' . $row['date'] . '</p>
-        <p class="text-sm">' . $row['description'] . '</p>
-        <p class="text-sm">Year: ' . $row['year'] . '</p>
-      
-        <form method="POST" class="mt-2">
-           
-        <input type="hidden" name="holidayId" value="' . $row['holidayID'] . '">
-            
-        <button type="submit" name="delete_holiday" class="flex justify-end bg-red-500 text-white px-4 py-2 rounded">Delete</button>
-
-        </form>
-    </div>';
-}
-$conn->close();
-
 ?>
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -54,7 +30,7 @@ $conn->close();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calendar</title>
+    <title>Projects</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 
@@ -82,6 +58,8 @@ $conn->close();
                                 <a href="job_applicants.php" class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">Applications</a>
                                 <a href="calendar.php" class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">Calendar</a>
                                 <a href="leave_requests.php" class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">Leave Requests</a>
+                                <a href="view_attendance.php" class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">Attendance</a>
+                
                                 <a href="view_attendance.php" class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">Attendance</a>
                 
                                 <a href="reports.php" class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">Reports</a>
@@ -133,42 +111,45 @@ $conn->close();
         </nav>
     </div>
 
-<!-- Header -->
-<header class="bg-white shadow">
-    <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-        <h1 class="text-3xl font-bold tracking-tight text-gray-900">Holiday Calendar</h1>
-    </div>
-</header>
+    <!-- Header -->
+    <header class="bg-white shadow">
+        <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+            <h1 class="text-3xl font-bold tracking-tight text-gray-900"></h1>
+        </div>
+    </header>
 
-<!-- Calendar and Add Holiday Form -->
-<div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-    <!-- Display Holidays -->
-    <div class="mb-6">
-        <?php echo $calendar; ?>
-    </div>
 
-    <!-- Add Holiday Form -->
-    <div class="bg-white shadow-md rounded-lg p-6">
-        <h2 class="text-2xl font-bold mb-4">Add New Holiday</h2>
-        <form method="POST">
+    <div class="container mx-auto p-4">
+        <h1 class="text-3xl font-bold mb-4">Submit Attendance</h1>
+       
+        <form action="submit_attendance.php" method="post">
+            <div class="mb-4">
+                <label for="employeeId" class="block text-sm font-medium text-gray-700">Employee ID</label>
+                <input type="number" name="employeeId" id="employeeId" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required>
+            </div>
             <div class="mb-4">
                 <label for="date" class="block text-sm font-medium text-gray-700">Date</label>
                 <input type="date" name="date" id="date" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required>
             </div>
             <div class="mb-4">
-                <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
-                <input type="text" name="description" id="description" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required>
+                <label for="clockInTime" class="block text-sm font-medium text-gray-700">Clock In Time</label>
+                <input type="time" name="clockInTime" id="clockInTime" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required>
             </div>
             <div class="mb-4">
-                <label for="year" class="block text-sm font-medium text-gray-700">Year</label>
-                <input type="number" name="year" id="year" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required>
+                <label for="clockOutTime" class="block text-sm font-medium text-gray-700">Clock Out Time</label>
+                <input type="time" name="clockOutTime" id="clockOutTime" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required>
             </div>
-            <div>
-                <button type="submit" name="add_holiday" class="bg-blue-500 text-white px-4 py-2 rounded">Add Holiday</button>
+            <div class="mb-4">
+                <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
+                <select name="status" id="status" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required>
+                    <option value="Present">Present</option>
+                    <option value="Absent">Absent</option>
+                </select>
             </div>
+            <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded shadow-md hover:bg-blue-700 transition duration-300">Submit Attendance</button>
         </form>
     </div>
-</div>
-
+    
 </body>
+
 </html>

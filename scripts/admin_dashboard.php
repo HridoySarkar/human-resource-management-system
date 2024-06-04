@@ -104,6 +104,7 @@ $conn->close();
                 <a href="job_applicants.php" class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">Jobs</a>
                 <a href="calendar.php" class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">Calenders</a>
                 <a href="leave_requests.php" class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">Leave Requests</a>
+                <a href="view_attendance.php" class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">Attendance</a>
                 <a href="#" class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">Reports</a>
 
               </div>
@@ -153,9 +154,18 @@ $conn->close();
     </nav>
 
     <header class="bg-white shadow">
+    
       <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
         <h1 class="text-3xl font-bold tracking-tight text-gray-900">Admin Dashboard</h1>
       </div>
+
+      <div class="flex justify-center" >
+        <a class="text-xl hover:underline font-medium" href="../index.php">view site</a>
+      </div>
+      <div class="flex justify-end" >
+          <a class="text-xl font-bold tracking-tight cursor:pointer text-green-900 hover:underline" href="submit_attendance.php">Give Attendance</a>
+      </div>
+
     </header>
 
 
@@ -170,8 +180,8 @@ $conn->close();
             <!-- Employees Card -->
             <a href="employees.php" class="flex flex-col justify-between h-full bg-gradient-to-r from-green-400 to-blue-500 text-white rounded-lg p-6 hover:scale-105 transition-transform duration-300">
               <div>
-                <h2 class="text-2xl font-bold mb-2">Employees</h2>
-                <p class="text-lg">Total Employees: <?= $employeeCount ?></p>
+                <h2 class="text-3xl font-bold mb-2">Employees</h2>
+                <p class="text-2xl">Total Employees: <?= $employeeCount ?></p>
               </div>
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-10 h-10">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20a5 5 0 11-10 0 5 5 0 0110 0z"></path>
@@ -182,8 +192,8 @@ $conn->close();
             <!-- Total Earnings Card -->
             <a href="projects.php" class="flex flex-col justify-between h-full bg-gradient-to-r from-yellow-400 to-orange-500 text-white rounded-lg p-6 hover:scale-105 transition-transform duration-300">
               <div>
-                <h2 class="text-2xl font-bold mb-2">Total Earnings</h2>
-                <p class="text-lg">$<?= $totalEarnings ?></p>
+                <h2 class="text-3xl font-bold mb-2">Total Earnings</h2>
+                <p class="text-2xl">$<?= $totalEarnings ?></p>
               </div>
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-10 h-10">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1H4a1 1 0 01-1-1V4a1 1 0 011-1z"></path>
@@ -193,8 +203,9 @@ $conn->close();
 
           <!-- Second Row of Flashy Cards -->
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6 p-6">
+
             <!-- Attendances Card -->
-            <a href="#" class="flex flex-col justify-between h-full bg-gradient-to-r from-red-400 to-pink-500 text-white rounded-lg p-6 hover:scale-105 transition-transform duration-300">
+            <a href="view_attendance.php" class="flex flex-col justify-between h-full bg-gradient-to-r from-red-400 to-pink-500 text-white rounded-lg p-6 hover:scale-105 transition-transform duration-300">
               <div>
                 <h2 class="text-2xl font-bold mb-2">Attendances</h2>
                 <div><?= $attendances ?></div>
@@ -203,9 +214,9 @@ $conn->close();
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 22c1.1 0 1.99-.9 1.99-2S13.1 18 12 18c-1.1 0-2.9-2 2s.9 2 2 2zm0-4c-1.1 0-2-.9-2-2s.9-2 2-2 2.9 2 2-.9 2-2 2zm0 16c-1.1 0-2-.9-2-2s.9-2 2-2 2.9 2 2-.9 2-2 2zm6-16c-1.1 0-2-.9-2-2s.9-2 2-2 2.9 2 2-.9 2-2 2zm-6 16c-1.1 0-2-.9-2-2s.9-2 2-2 2.9 2 2-.9 2-2 2zm6 0c-1.1 0-2-.9-2-2s.9-2 2-2 2.9 2 2-.9 2-2 2z"></path>
               </svg>
             </a>
-
+           
             <!-- Employee Salaries Card -->
-            <a href="#" class="flex flex-col justify-between h-full bg-gradient-to-r from-indigo-400 to-violet-500 text-white rounded-lg p-6 hover:scale-105 transition-transform duration-300">
+            <a href="view_salaries.php" class="flex flex-col justify-between h-full bg-gradient-to-r from-indigo-400 to-violet-500 text-white rounded-lg p-6 hover:scale-105 transition-transform duration-300">
               <div>
                 <h2 class="text-2xl font-bold mb-2">Employee Salaries</h2>
                 <div><?= $employeeSalaries ?></div>

@@ -1,52 +1,63 @@
 <?php
-
 include("db_connection.php");
 
-
+// Handle salary updates
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    if (isset($_POST['add_holiday'])) {
-        $date = $_POST['date'];
-        $description = $_POST['description'];
-        $year = $_POST['year'];
+    $salaryId = $_POST['salaryId'];
+    $bonuses = $_POST['bonuses'];
+    $deductions = $_POST['deductions'];
+    $baseSalary = $_POST['baseSalary'];
+    $paymentDate = $_POST['paymentDate'];
 
-        $stmt = $conn->prepare("INSERT INTO holidays (date, description, year) VALUES (?, ?, ?)");
-        $stmt->bind_param("ssi", $date, $description, $year);
-        $stmt->execute();
-        $stmt->close();
-    } elseif (isset($_POST['delete_holiday'])) {
-        $holidayId = $_POST['holidayId'];
+    $stmt = $conn->prepare("UPDATE salary SET bonuses = ?, deductions = ?, baseSalary = ?, paymentDate = ? WHERE salaryId = ?");
+    $stmt->bind_param("ddssi", $bonuses, $deductions, $baseSalary, $paymentDate, $salaryId);
 
-        $stmt = $conn->prepare("DELETE FROM holidays WHERE holidayID = ?");
-        $stmt->bind_param("i", $holidayId);
-        $stmt->execute();
-        $stmt->close();
+    if ($stmt->execute()) {
+        $success_message = "Salary updated successfully.";
+    } else {
+        $error_message = "Error updating salary.";
     }
+
+    $stmt->close();
 }
 
-$query = "SELECT * FROM holidays ORDER BY date";
+// Fetch all salaries with employee names
+$query = "
+    SELECT s.salaryId, s.employeeId, s.bonuses, s.deductions, s.baseSalary, s.paymentDate, e.name
+    FROM salary s
+    JOIN employee e ON s.employeeId = e.employeeId
+";
 $result = $conn->query($query);
 
-$calendar = '';
+$salaries = '';
 while ($row = $result->fetch_assoc()) {
-
-    $calendar .= '<div class="bg-white shadow-md rounded-lg p-4 mb-4">
-        <p class="text-lg font-bold">' . $row['date'] . '</p>
-        <p class="text-sm">' . $row['description'] . '</p>
-        <p class="text-sm">Year: ' . $row['year'] . '</p>
-      
-        <form method="POST" class="mt-2">
-           
-        <input type="hidden" name="holidayId" value="' . $row['holidayID'] . '">
-            
-        <button type="submit" name="delete_holiday" class="flex justify-end bg-red-500 text-white px-4 py-2 rounded">Delete</button>
-
-        </form>
-    </div>';
+    $salaries .= "
+        <tr>
+            <form action='view_update_salaries.php' method='POST'>
+                <input type='hidden' name='salaryId' value='{$row['salaryId']}'>
+                <td class='px-4 py-2 border'>{$row['name']}</td>
+                <td class='px-4 py-2 border'>
+                    <input type='number' step='0.01' name='bonuses' value='{$row['bonuses']}' class='mt-1 block w-full border-gray-300 rounded-md shadow-sm'>
+                </td>
+                <td class='px-4 py-2 border'>
+                    <input type='number' step='0.01' name='deductions' value='{$row['deductions']}' class='mt-1 block w-full border-gray-300 rounded-md shadow-sm'>
+                </td>
+                <td class='px-4 py-2 border'>
+                    <input type='number' step='0.01' name='baseSalary' value='{$row['baseSalary']}' class='mt-1 block w-full border-gray-300 rounded-md shadow-sm'>
+                </td>
+                <td class='px-4 py-2 border'>
+                    <input type='date' name='paymentDate' value='{$row['paymentDate']}' class='mt-1 block w-full border-gray-300 rounded-md shadow-sm'>
+                </td>
+                <td class='px-4 py-2 border'>
+                    <button type='submit' class='bg-blue-500 text-white px-4 py-2 rounded-md shadow-sm hover:bg-blue-700 transition duration-300'>Update</button>
+                </td>
+            </form>
+        </tr>
+    ";
 }
+
 $conn->close();
-
 ?>
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -54,7 +65,7 @@ $conn->close();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calendar</title>
+    <title>Projects</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 
@@ -133,42 +144,40 @@ $conn->close();
         </nav>
     </div>
 
-<!-- Header -->
-<header class="bg-white shadow">
-    <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-        <h1 class="text-3xl font-bold tracking-tight text-gray-900">Holiday Calendar</h1>
-    </div>
-</header>
+    <!-- Header -->
+    <header class="bg-white shadow">
+        <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+            <h1 class="text-3xl font-bold tracking-tight text-gray-900"></h1>
+        </div>
+    </header>
 
-<!-- Calendar and Add Holiday Form -->
-<div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-    <!-- Display Holidays -->
-    <div class="mb-6">
-        <?php echo $calendar; ?>
-    </div>
+    <div class="container mx-auto p-4">
+        <h1 class="text-3xl font-bold mb-4">View and Update Salaries</h1>
 
-    <!-- Add Holiday Form -->
-    <div class="bg-white shadow-md rounded-lg p-6">
-        <h2 class="text-2xl font-bold mb-4">Add New Holiday</h2>
-        <form method="POST">
-            <div class="mb-4">
-                <label for="date" class="block text-sm font-medium text-gray-700">Date</label>
-                <input type="date" name="date" id="date" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required>
-            </div>
-            <div class="mb-4">
-                <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
-                <input type="text" name="description" id="description" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required>
-            </div>
-            <div class="mb-4">
-                <label for="year" class="block text-sm font-medium text-gray-700">Year</label>
-                <input type="number" name="year" id="year" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required>
-            </div>
-            <div>
-                <button type="submit" name="add_holiday" class="bg-blue-500 text-white px-4 py-2 rounded">Add Holiday</button>
-            </div>
-        </form>
+        <?php if (isset($success_message)) {
+            echo "<p class='text-green-500'>$success_message</p>";
+        } ?>
+        <?php if (isset($error_message)) {
+            echo "<p class='text-red-500'>$error_message</p>";
+        } ?>
+
+        <table class="min-w-full bg-white">
+            <thead>
+                <tr>
+                    <th class="px-4 py-2 border">Employee Name</th>
+                    <th class="px-4 py-2 border">Bonuses</th>
+                    <th class="px-4 py-2 border">Deductions</th>
+                    <th class="px-4 py-2 border">Base Salary</th>
+                    <th class="px-4 py-2 border">Payment Date</th>
+                    <th class="px-4 py-2 border">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php echo $salaries; ?>
+            </tbody>
+        </table>
     </div>
-</div>
 
 </body>
+
 </html>

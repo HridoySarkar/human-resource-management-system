@@ -2,51 +2,31 @@
 
 include("db_connection.php");
 
-
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    if (isset($_POST['add_holiday'])) {
-        $date = $_POST['date'];
-        $description = $_POST['description'];
-        $year = $_POST['year'];
-
-        $stmt = $conn->prepare("INSERT INTO holidays (date, description, year) VALUES (?, ?, ?)");
-        $stmt->bind_param("ssi", $date, $description, $year);
-        $stmt->execute();
-        $stmt->close();
-    } elseif (isset($_POST['delete_holiday'])) {
-        $holidayId = $_POST['holidayId'];
-
-        $stmt = $conn->prepare("DELETE FROM holidays WHERE holidayID = ?");
-        $stmt->bind_param("i", $holidayId);
-        $stmt->execute();
-        $stmt->close();
-    }
-}
-
-$query = "SELECT * FROM holidays ORDER BY date";
+// Fetch attendances with employee names
+$query = "
+    SELECT a.attendanceId, a.date, a.clockInTime, a.clockOutTime, a.status, e.name
+    FROM attendance a
+    JOIN employee e ON a.employeeId = e.employeeId
+    ORDER BY a.date DESC
+";
 $result = $conn->query($query);
 
-$calendar = '';
+$attendances = '';
+
 while ($row = $result->fetch_assoc()) {
-
-    $calendar .= '<div class="bg-white shadow-md rounded-lg p-4 mb-4">
-        <p class="text-lg font-bold">' . $row['date'] . '</p>
-        <p class="text-sm">' . $row['description'] . '</p>
-        <p class="text-sm">Year: ' . $row['year'] . '</p>
-      
-        <form method="POST" class="mt-2">
-           
-        <input type="hidden" name="holidayId" value="' . $row['holidayID'] . '">
-            
-        <button type="submit" name="delete_holiday" class="flex justify-end bg-red-500 text-white px-4 py-2 rounded">Delete</button>
-
-        </form>
-    </div>';
+    $attendances .= "
+        <tr>
+            <td class='border px-4 py-2'>{$row['name']}</td>
+            <td class='border px-4 py-2'>{$row['date']}</td>
+            <td class='border px-4 py-2'>{$row['clockInTime']}</td>
+            <td class='border px-4 py-2'>{$row['clockOutTime']}</td>
+            <td class='border px-4 py-2'>{$row['status']}</td>
+        </tr>
+    ";
 }
+
 $conn->close();
-
 ?>
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -54,7 +34,7 @@ $conn->close();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calendar</title>
+    <title>Projects</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 
@@ -133,42 +113,31 @@ $conn->close();
         </nav>
     </div>
 
-<!-- Header -->
-<header class="bg-white shadow">
-    <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-        <h1 class="text-3xl font-bold tracking-tight text-gray-900">Holiday Calendar</h1>
-    </div>
-</header>
+    <!-- Header -->
+    <header class="bg-white shadow">
+        <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+            <h1 class="text-3xl font-bold tracking-tight text-gray-900"></h1>
+        </div>
+    </header>
 
-<!-- Calendar and Add Holiday Form -->
-<div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-    <!-- Display Holidays -->
-    <div class="mb-6">
-        <?php echo $calendar; ?>
-    </div>
 
-    <!-- Add Holiday Form -->
-    <div class="bg-white shadow-md rounded-lg p-6">
-        <h2 class="text-2xl font-bold mb-4">Add New Holiday</h2>
-        <form method="POST">
-            <div class="mb-4">
-                <label for="date" class="block text-sm font-medium text-gray-700">Date</label>
-                <input type="date" name="date" id="date" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required>
-            </div>
-            <div class="mb-4">
-                <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
-                <input type="text" name="description" id="description" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required>
-            </div>
-            <div class="mb-4">
-                <label for="year" class="block text-sm font-medium text-gray-700">Year</label>
-                <input type="number" name="year" id="year" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required>
-            </div>
-            <div>
-                <button type="submit" name="add_holiday" class="bg-blue-500 text-white px-4 py-2 rounded">Add Holiday</button>
-            </div>
-        </form>
+    <div class="container mx-auto p-4">
+        <h1 class="text-3xl font-bold mb-4">Attendance Records</h1>
+        <table class="min-w-full bg-white">
+            <thead>
+                <tr>
+                    <th class="border px-4 py-2">Employee Name</th>
+                    <th class="border px-4 py-2">Date</th>
+                    <th class="border px-4 py-2">Clock In Time</th>
+                    <th class="border px-4 py-2">Clock Out Time</th>
+                    <th class="border px-4 py-2">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php echo $attendances; ?>
+            </tbody>
+        </table>
     </div>
-</div>
-
 </body>
+
 </html>

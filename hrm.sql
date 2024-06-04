@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 03, 2024 at 02:44 PM
+-- Generation Time: Jun 04, 2024 at 08:19 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.1.25
 
@@ -73,7 +73,7 @@ INSERT INTO `applicants` (`id`, `job_id`, `name`, `email`, `gender`, `address`, 
 --
 
 CREATE TABLE `attendance` (
-  `attendanceId` bigint(20) NOT NULL,
+  `attendanceId` int(11) NOT NULL,
   `employeeId` int(100) DEFAULT NULL,
   `date` date DEFAULT NULL,
   `clockInTime` time DEFAULT NULL,
@@ -87,10 +87,8 @@ CREATE TABLE `attendance` (
 --
 
 INSERT INTO `attendance` (`attendanceId`, `employeeId`, `date`, `clockInTime`, `clockOutTime`, `status`, `leaveType`) VALUES
-(1, 1, '2024-05-01', '09:00:00', '17:00:00', 'Present', NULL),
-(2, 2, '2024-05-01', '09:15:00', '17:15:00', 'Present', NULL),
-(3, 3, '2024-05-01', '09:00:00', '17:00:00', 'Present', NULL),
-(4, 4, '2024-05-01', '09:00:00', '17:00:00', 'Absent', 'Sick Leave');
+(1, 2, '2024-06-04', '12:09:00', '18:09:00', 'Present', NULL),
+(2, 1, '2024-06-04', '12:09:00', '18:09:00', 'Present', NULL);
 
 -- --------------------------------------------------------
 
@@ -160,9 +158,12 @@ CREATE TABLE `department` (
 --
 
 INSERT INTO `department` (`departmentId`, `departmentName`, `description`, `headOfDepartment`) VALUES
-(1, 'Human Resources', 'Responsible for managing employee relations and organizational development.', 2),
-(2, 'Finance', 'Responsible for managing financial transactions and reporting.', 2),
-(3, 'IT', 'Responsible for managing information technology systems and infrastructure.', 1);
+(1, 'Human Resources', 'Responsible for managing employee relations and organizational development.', 112),
+(2, 'Finance', 'Responsible for managing financial transactions and reporting.', 117),
+(3, 'IT', 'Responsible for managing information technology systems and infrastructure.', 1),
+(5, 'Marketing', 'This department works on promoting the product and attracting prospects.', 102),
+(6, 'Customer Support', 'This department addresses all incoming client concerns, complaints, and requests.', 110),
+(7, 'Design', 'his department is responsible for the visual aspects of the product.', 114);
 
 -- --------------------------------------------------------
 
@@ -183,19 +184,29 @@ CREATE TABLE `employee` (
   `baseSalary` decimal(10,2) NOT NULL,
   `username` varchar(50) NOT NULL,
   `password` varchar(80) NOT NULL,
-  `role` enum('employee','admin') NOT NULL
+  `role` enum('employee','admin') NOT NULL,
+  `leave_request` enum('NotApplied','Applied','Approved','Rejected') DEFAULT 'NotApplied'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `employee`
 --
 
-INSERT INTO `employee` (`employeeId`, `name`, `email`, `phone`, `address`, `jobTitle`, `departmentId`, `dateOfJoining`, `status`, `baseSalary`, `username`, `password`, `role`) VALUES
-(1, 'sohan', 'sohan@example.com', '123-456-7890', '123 Main St, Anytown, BD', 'Sr. Software Engineer', 3, '2020-01-15', 'Active', 50000.00, 'sohan', '1234', 'admin'),
-(2, 'tahmina', 'tahmina@example.com', '987-654-3210', '456 Oak St, Anytown, BD', 'Data Analyst', 3, '2020-03-20', 'Active', 48000.00, 'tahmina', '5678', 'employee'),
-(3, 'hridoy', 'hridoy@example.com', '555-123-4567', '789 Elm St, Anytown, BD', 'Sr. Programmer', 3, '2020-02-10', 'Active', 48000.00, 'hridoy', '91011', 'employee'),
-(4, 'rejoan', 'rejoan@example.com', '113-112-4567', '709 Fnt St, Anytown, BD', 'IT Specialist', 3, '2020-02-10', 'Active', 38000.00, 'rejoan', '123', 'admin'),
-(101, 'test', 'test@example.com', '123569785', '30 Mt. Fujiyama, JP', 'senior accountant', 2, '2020-01-15', 'Active', 40000.00, 'test', 'test', 'employee');
+INSERT INTO `employee` (`employeeId`, `name`, `email`, `phone`, `address`, `jobTitle`, `departmentId`, `dateOfJoining`, `status`, `baseSalary`, `username`, `password`, `role`, `leave_request`) VALUES
+(1, 'sohan', 'sohan@example.com', '123-456-7890', '123 Main St, Anytown, BD', 'Sr. Software Engineer', 3, '2020-01-15', 'Active', 50000.00, 'sohan', '1234', 'admin', 'NotApplied'),
+(2, 'tahmina', 'tahmina@example.com', '987-654-3210', '456 Oak St, Anytown, BD', 'Data Analyst', 3, '2020-03-20', 'Active', 48000.00, 'tahmina', '5678', 'employee', 'NotApplied'),
+(3, 'hridoy', 'hridoy@example.com', '555-123-4567', '789 Elm St, Anytown, BD', 'Sr. Programmer', 3, '2020-02-10', 'Active', 48000.00, 'hridoy', '91011', 'employee', 'NotApplied'),
+(4, 'rejoan', 'rejoan@example.com', '113-112-4567', '709 Fnt St, Anytown, BD', 'IT Specialist', 3, '2020-02-10', 'Active', 38000.00, 'rejoan', '123', 'admin', 'NotApplied'),
+(102, 'hasib', 'hasib@example.com', '1234567890', 'Netrokona, BGD', 'Media Manager', 5, '2021-06-25', 'Active', 38000.00, 'hasib', 'hasib', 'employee', 'NotApplied'),
+(103, 'sejuti', 'sejuti@example.com', '1234567123', 'Dhaka, BGD', 'Associate Media Manager', 5, '2023-06-10', 'Active', 30000.00, 'sejuti', 'sejuti', 'employee', 'Approved'),
+(110, 'rahman', 'rahman@example.com', '99997454', 'Mymensingh, BGD', 'Customer Support Head', 6, '2023-06-10', 'Active', 34000.00, 'rahman', 'rahman', 'employee', 'NotApplied'),
+(111, 'joyita', 'joyita@example.com', '67123329', 'Dhaka, BGD', 'Junior Customer Support', 6, '2024-03-10', 'Active', 25000.00, 'joyita', 'joyita', 'employee', 'NotApplied'),
+(112, 'ahmed', 'ahmed@example.com', '121212121', 'Dhaka, BGD', 'HR Admin', 1, '2021-02-10', 'Active', 40000.00, 'ahmed', 'ahmed', 'admin', 'NotApplied'),
+(113, 'sojib', 'sojib@example.com', '1234597123', 'Dhaka, BGD', 'Assistant HR Admin', 1, '2022-04-10', 'Active', 30000.00, 'sojib', 'sojib', 'admin', 'NotApplied'),
+(114, 'bilkis', 'bilkis@example.com', '1234789', 'Cumilla, BGD', 'Product Designer', 7, '2021-01-16', 'Active', 38000.00, 'bilkis', 'bilkis', 'employee', 'NotApplied'),
+(115, 'ayesha', 'ayesha@example.com', '67123294', 'Barishal, BGD', 'Junior Product Designer', 7, '2022-05-10', 'Active', 30000.00, 'ayesha', 'ayesha', 'employee', 'NotApplied'),
+(116, 'roksana', 'roksana@example.com', '1325815', 'Dhaka, BGD', 'Associate Accountant', 2, '2024-06-01', '', 35000.00, 'roksana', 'roksana', 'employee', 'NotApplied'),
+(117, 'Mahedy', 'mahedy@example.com', '13453434', 'Barishal, BGD', 'Senior Accountant', 2, '2022-01-01', '', 40000.00, 'mahedy', 'mahedy', 'employee', 'NotApplied');
 
 -- --------------------------------------------------------
 
@@ -206,24 +217,25 @@ INSERT INTO `employee` (`employeeId`, `name`, `email`, `phone`, `address`, `jobT
 CREATE TABLE `holidays` (
   `holidayID` int(11) NOT NULL,
   `date` date DEFAULT NULL,
-  `description` varchar(120) DEFAULT NULL
+  `description` varchar(120) DEFAULT NULL,
+  `year` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `holidays`
 --
 
-INSERT INTO `holidays` (`holidayID`, `date`, `description`) VALUES
-(1, '2024-01-01', 'New Year\'s Day'),
-(2, '2024-02-14', 'Valentine\'s Day'),
-(3, '2024-03-17', 'St. Patrick\'s Day'),
-(4, '2024-04-21', 'Easter Sunday'),
-(5, '2024-05-27', 'Memorial Day'),
-(6, '2024-07-04', 'Independence Day'),
-(7, '2024-09-02', 'Labor Day'),
-(8, '2024-10-31', 'Halloween'),
-(9, '2024-11-28', 'Thanksgiving Day'),
-(10, '2024-12-25', 'Christmas Day');
+INSERT INTO `holidays` (`holidayID`, `date`, `description`, `year`) VALUES
+(1, '2024-01-01', 'New Year\'s Day', 2024),
+(2, '2024-02-14', 'Valentine\'s Day', 2024),
+(3, '2024-03-17', 'St. Patrick\'s Day', 2024),
+(4, '2024-04-21', 'Easter Sunday', 2024),
+(5, '2024-05-27', 'Memorial Day', 2024),
+(6, '2024-07-04', 'Independence Day', 2024),
+(7, '2024-09-02', 'Labor Day', 2024),
+(8, '2024-10-31', 'Halloween', 2024),
+(9, '2024-11-28', 'Thanksgiving Day', 2024),
+(10, '2024-12-25', 'Christmas Day', 2024);
 
 -- --------------------------------------------------------
 
@@ -268,8 +280,16 @@ CREATE TABLE `leave_requests` (
   `reason` varchar(200) DEFAULT NULL,
   `departmentId` int(11) NOT NULL,
   `jobTitle` varchar(100) NOT NULL,
-  `email` varchar(100) NOT NULL
+  `email` varchar(100) NOT NULL,
+  `leave_status` enum('Approved','Rejected','Applied') DEFAULT 'Applied'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `leave_requests`
+--
+
+INSERT INTO `leave_requests` (`id`, `employeeId`, `from_date`, `to_date`, `reason`, `departmentId`, `jobTitle`, `email`, `leave_status`) VALUES
+(11, 103, '2024-06-10', '2024-06-15', 'Sibling Marriage.', 5, 'Associate Media Manager', 'sejuti@example.com', 'Approved');
 
 -- --------------------------------------------------------
 
@@ -454,10 +474,16 @@ ALTER TABLE `applicants`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
+-- AUTO_INCREMENT for table `attendance`
+--
+ALTER TABLE `attendance`
+  MODIFY `attendanceId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
 -- AUTO_INCREMENT for table `clients`
 --
 ALTER TABLE `clients`
-  MODIFY `clientId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `clientId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `contacts`
@@ -469,19 +495,19 @@ ALTER TABLE `contacts`
 -- AUTO_INCREMENT for table `department`
 --
 ALTER TABLE `department`
-  MODIFY `departmentId` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `departmentId` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `employee`
 --
 ALTER TABLE `employee`
-  MODIFY `employeeId` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=102;
+  MODIFY `employeeId` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=118;
 
 --
 -- AUTO_INCREMENT for table `holidays`
 --
 ALTER TABLE `holidays`
-  MODIFY `holidayID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `holidayID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `jobs`
@@ -493,7 +519,7 @@ ALTER TABLE `jobs`
 -- AUTO_INCREMENT for table `leave_requests`
 --
 ALTER TABLE `leave_requests`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `services`
