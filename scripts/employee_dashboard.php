@@ -16,7 +16,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Handle password update
     if (isset($_POST['change_password'])) {
 
-        $username = $_POST['username'];
         $password = $_POST['password'];
 
         // Update the password
@@ -31,10 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt->execute();
 
         // Refresh the data
-        // $stmt->execute([$userId]);
-
         header("Location: employee_dashboard.php");
-        $userData = $stmt->get_result()->fetch_assoc();
         exit;
     } else {
         // Handle leave request submission
@@ -64,16 +60,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $stmt->bind_param("isss", $userId, $from_date, $to_date, $reason);
 
             if ($stmt->execute()) {
-                // echo "Leave request submitted successfully.";
                 header("Location: successful.php");
-                // header("Location: employee_dashboard.php");
+                exit;
             } else {
-                // echo "Error submitting leave request: " . $stmt->error;
                 header("Location: error.php");
                 echo $stmt->error;
             }
         } else {
-            // echo "Error: Employee ID does not exist.";
             header("Location: error.php");
         }
     }
@@ -101,11 +94,6 @@ $conn->close();
 
 ?>
 
-
-
-
-
-
 <!-- HTML TEMPLATE -->
 <!DOCTYPE html>
 <html>
@@ -115,22 +103,28 @@ $conn->close();
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 
-<body class="bg-gray-100 min-h-screen">
+<body class="bg-gray-200 min-h-screen">
     <div class="container mx-auto px-4">
 
-        <nav class="bg-gray-100 py-4">
-            <div class="container mx-auto p-4 flex justify-between">
-                <h1 class="text-2xl font-bold">Employee Dashboard</h1>
-                
+    <header class="bg-white shadow">
+    
+    <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+      <h1 class="text-3xl font-bold tracking-tight text-gray-900">Employee Dashboard</h1>
+    </div>
 
-                <form action="employee_logout.php" method="post">
-                    <input class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" type="submit" value="Logout">
-                </form>
-                
-            </div>
-        </nav>
+    <div class="flex justify-center" >
+      <a class="text-xl hover:underline font-medium" href="../index.php">view site</a>
+    </div>
+    <div class="flex justify-end" >
+        <a class="text-xl font-bold tracking-tight cursor:pointer text-green-900 hover:underline" href="submit_attendance_employee.php">Give Attendance</a>
+    </div>
+
+  </header>
+
+  &nbsp; &nbsp;
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
             <!-- Personal Details Card -->
             <div class="p-6 bg-white rounded-lg shadow-md">
                 <h2 class="text-xl font-semibold mb-2">Personal Details</h2>
@@ -152,7 +146,6 @@ $conn->close();
                         <button type="submit" class="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600">Update</button>
                     </div>
                 </form>
-
             </div>
 
             <!-- Department and Salary Card -->
@@ -162,14 +155,15 @@ $conn->close();
                 <p>Head of Department: <?php echo htmlspecialchars($userData['headOfDepartment']); ?></p>
                 <p>Total Salary: <?php echo htmlspecialchars($userData['totalSalary']); ?></p>
             </div>
+            
             <!-- Active Status and Joining Date Card -->
             <div class="p-6 bg-white rounded-lg shadow-md">
                 <h2 class="text-xl font-semibold mb-2">Active Status and Joining Date</h2>
-                <p>Department: <?php echo htmlspecialchars($userData['departmentName']); ?></p>
                 <p>Active Status: <?php echo htmlspecialchars($userData['status']); ?></p>
                 <p>Joining Date: <?php echo htmlspecialchars($userData['dateOfJoining']); ?></p>
             </div>
         </div>
+
 
 
         <!-- Leave Request Form -->
@@ -195,8 +189,6 @@ $conn->close();
                 </div>
             </form>
         </div>
-
-
 
     </div>
 

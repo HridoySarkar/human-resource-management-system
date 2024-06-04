@@ -38,7 +38,7 @@ if ($stmt->execute()) {
         }
     } else {
         // Invalid credentials, redirect back to login page
-        header("Location: error.php");
+       header("Location: error.php");
     }
 } else {
     echo "Error: " . $stmt->error;
@@ -46,3 +46,5 @@ if ($stmt->execute()) {
 
 $stmt->close();
 $conn->close();
+?>
+
